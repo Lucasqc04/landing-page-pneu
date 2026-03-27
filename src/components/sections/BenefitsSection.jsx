@@ -6,7 +6,8 @@ import SectionHeading from '../ui/SectionHeading'
 function BenefitsSection() {
   return (
     <section className="relative overflow-hidden py-24 md:py-36">
-      <div className="absolute left-1/2 top-[26%] -z-10 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(197,207,219,0.5)_0%,rgba(244,245,247,0)_70%)]" />
+      <div className="absolute left-1/2 top-[26%] -z-10 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(197,207,219,0.28)_0%,rgba(255,255,255,0)_70%)]" />
+      <div className="pointer-events-none absolute -right-6 top-6 h-[13rem] w-[4rem] rotate-[10deg] tread-watermark tread-watermark-b tread-watermark-soft md:-right-8 md:top-8 md:h-[26rem] md:w-[8rem]" />
       <Container>
         <Reveal>
           <SectionHeading

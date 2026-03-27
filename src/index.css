@@ -37,6 +37,28 @@
     text-wrap: balance;
   }
 
+  .tread-watermark {
+    background: center / cover no-repeat var(--tread-image, url('/patterns/tread-track-a.png'));
+    filter: grayscale(1) invert(1) contrast(1.28);
+    opacity: 0.22;
+  }
+
+  .tread-watermark-a {
+    --tread-image: url('/patterns/tread-track-a.png');
+  }
+
+  .tread-watermark-b {
+    --tread-image: url('/patterns/tread-track-b.png');
+  }
+
+  .tread-watermark-soft {
+    opacity: 0.16;
+  }
+
+  .tread-watermark-strong {
+    opacity: 0.3;
+  }
+
   .ambient-grid {
     background-image:
       linear-gradient(rgba(9, 15, 26, 0.045) 1px, transparent 1px),

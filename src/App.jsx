@@ -8,7 +8,7 @@ const heroVideoPath = '/videos/hero-tire-restoration.mp4'
 
 function App() {
   return (
-    <main className="overflow-x-clip bg-surface text-ink">
+    <main className="overflow-x-clip bg-white text-ink">
       <HeroScrollVideo videoSrc={heroVideoPath} />
       <TransformationSection />
       <ProcessSection />

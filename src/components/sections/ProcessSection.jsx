@@ -5,7 +5,9 @@ import SectionHeading from '../ui/SectionHeading'
 
 function ProcessSection() {
   return (
-    <section className="relative py-24 md:py-36">
+    <section className="relative overflow-hidden py-24 md:py-36">
+      <div className="pointer-events-none absolute left-[-1rem] top-14 h-[13rem] w-[4rem] rotate-[7deg] tread-watermark tread-watermark-b tread-watermark-soft md:left-[-2rem] md:top-20 md:h-[25rem] md:w-[7.5rem]" />
+      <div className="pointer-events-none absolute right-[-1.2rem] bottom-16 hidden h-[27rem] w-[8rem] -rotate-[11deg] tread-watermark tread-watermark-a tread-watermark-soft md:block" />
       <Container>
         <Reveal>
           <SectionHeading

@@ -28,6 +28,8 @@ function TransformationTile({ label, title, copy, tone }) {
 function TransformationSection() {
   return (
     <section className="relative overflow-hidden py-24 md:py-36">
+      <div className="pointer-events-none absolute -right-8 top-10 h-[14rem] w-[4.3rem] rotate-[8deg] tread-watermark tread-watermark-a tread-watermark-soft md:-right-10 md:top-12 md:h-[29rem] md:w-[8.5rem]" />
+      <div className="pointer-events-none absolute -left-10 bottom-10 hidden h-[22rem] w-[7rem] -rotate-[14deg] tread-watermark tread-watermark-b tread-watermark-soft lg:block" />
       <div className="absolute inset-x-0 top-0 h-px bg-line/70" />
       <Container>
         <Reveal>
