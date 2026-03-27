@@ -2,8 +2,6 @@ import { useRef } from 'react'
 import { heroContent } from '../../content/landingContent'
 import useScrollScrubVideo from '../../hooks/useScrollScrubVideo'
 
-const HERO_SCRUB_VIEWPORTS = 3.9
-
 function HeroScrollVideo({ videoSrc }) {
   const sectionRef = useRef(null)
   const videoRef = useRef(null)
@@ -15,8 +13,7 @@ function HeroScrollVideo({ videoSrc }) {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-white"
-      style={{ height: `${HERO_SCRUB_VIEWPORTS * 100}svh` }}
+      className="relative h-[250svh] w-full bg-white md:h-[310svh]"
     >
       <div className="sticky top-0 h-[92svh] overflow-hidden md:h-[90svh]">
         {/* Backgrounds */}

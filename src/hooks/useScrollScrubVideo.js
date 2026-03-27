@@ -56,17 +56,27 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
       return undefined
     }
 
+    const isCoarsePointer =
+      window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0
+    const seekEpsilon = isCoarsePointer ? 1 / 30 : 1 / 120
+
     let rafId = null
+    let isTickQueued = false
     let lastTargetTime = -1
 
     const tick = () => {
+      isTickQueued = false
       const rect = section.getBoundingClientRect()
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
+        return
+      }
+
       const scrubDistance = Math.max(section.offsetHeight - window.innerHeight, 1)
       const travelled = clamp(-rect.top, 0, scrubDistance)
       progressRef.current = clamp(travelled / scrubDistance, 0, 1)
       const targetTime = clamp(progressRef.current * duration, 0, duration)
 
-      if (Math.abs(targetTime - lastTargetTime) > 1 / 240) {
+      if (Math.abs(targetTime - lastTargetTime) > seekEpsilon) {
         lastTargetTime = targetTime
         if (typeof video.fastSeek === 'function') {
           video.fastSeek(targetTime)
@@ -74,14 +84,28 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
           video.currentTime = targetTime
         }
       }
+    }
 
+    const queueTick = () => {
+      if (isTickQueued) {
+        return
+      }
+      isTickQueued = true
       rafId = requestAnimationFrame(tick)
     }
 
-    rafId = requestAnimationFrame(tick)
+    queueTick()
+    window.addEventListener('scroll', queueTick, { passive: true })
+    window.addEventListener('resize', queueTick)
+    window.addEventListener('orientationchange', queueTick)
 
     return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId)
+      window.removeEventListener('scroll', queueTick)
+      window.removeEventListener('resize', queueTick)
+      window.removeEventListener('orientationchange', queueTick)
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+      }
     }
   }, [duration, sectionRef, videoRef])
 
