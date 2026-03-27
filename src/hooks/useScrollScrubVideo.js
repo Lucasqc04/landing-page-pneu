@@ -58,16 +58,24 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
 
     const isCoarsePointer =
       window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0
-    const seekEpsilon = isCoarsePointer ? 1 / 30 : 1 / 120
+    const seekEpsilon = isCoarsePointer ? 1 / 12 : 1 / 120
+    const minSeekIntervalMs = isCoarsePointer ? 85 : 0
 
     let rafId = null
     let isTickQueued = false
     let lastTargetTime = -1
+    let lastSeekAt = 0
 
-    const tick = () => {
+    const tick = (now) => {
       isTickQueued = false
       const rect = section.getBoundingClientRect()
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
+        return
+      }
+
+      if (minSeekIntervalMs > 0 && now - lastSeekAt < minSeekIntervalMs) {
+        isTickQueued = true
+        rafId = requestAnimationFrame(tick)
         return
       }
 
@@ -78,6 +86,7 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
 
       if (Math.abs(targetTime - lastTargetTime) > seekEpsilon) {
         lastTargetTime = targetTime
+        lastSeekAt = now
         if (typeof video.fastSeek === 'function') {
           video.fastSeek(targetTime)
         } else {

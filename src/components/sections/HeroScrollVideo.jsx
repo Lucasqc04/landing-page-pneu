@@ -13,7 +13,7 @@ function HeroScrollVideo({ videoSrc }) {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[250svh] w-full bg-white md:h-[310svh]"
+      className="relative h-[160svh] w-full bg-white md:h-[310svh]"
     >
       <div className="sticky top-0 h-[92svh] overflow-hidden md:h-[90svh]">
         {/* Backgrounds */}
@@ -76,7 +76,6 @@ function HeroScrollVideo({ videoSrc }) {
             <div className="h-full w-full overflow-hidden rounded-[1.5rem] md:h-[72svh] md:w-[88%] md:rounded-[1.35rem]">
               <video
                 ref={videoRef}
-                src={videoSrc}
                 className="h-full w-full object-cover"
                 muted
                 playsInline
@@ -84,7 +83,17 @@ function HeroScrollVideo({ videoSrc }) {
                 disablePictureInPicture
                 controlsList="nodownload noplaybackrate noremoteplayback"
                 aria-label="Video do processo de fabricacao de pneus remold premium controlado pelo scroll"
-              />
+              >
+                <source
+                  src="/videos/hero-tire-restoration.mobile.mp4"
+                  media="(max-width: 767px)"
+                  type="video/mp4"
+                />
+                <source
+                  src={videoSrc}
+                  type="video/mp4"
+                />
+              </video>
             </div>
           </div>
 
