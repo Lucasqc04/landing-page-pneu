@@ -13,6 +13,7 @@ function HeroScrollVideo({ videoSrc }) {
   return (
     <section
       ref={sectionRef}
+      data-hero-scroll-section
       className="relative h-[160svh] w-full bg-white md:h-[310svh]"
     >
       <div className="sticky top-0 h-[92svh] overflow-hidden md:h-[90svh]">

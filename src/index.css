@@ -144,22 +144,26 @@
   /* ── Marcas de rastro no chão ─────────────────────────────────── */
   .tire-tread-marks-layer {
     position: absolute;
-    inset: 0;
-    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--tread-page-height, 100vh);
+    z-index: 39;
+    overflow: hidden;
     pointer-events: none;
   }
 
   .tire-tread-stamp {
     position: absolute;
-    top: calc(50% + var(--stamp-offset-y, 0px));
-    left: var(--tire-left);
-    width: var(--tire-width);
+    top: var(--stamp-top, 50%);
+    left: var(--stamp-left, var(--tire-left));
+    width: var(--stamp-width, var(--tire-width));
     transform:
-      translateY(calc(-50% + var(--stamp-trail-y, 0%)))
+      translateY(-50%)
       scale(var(--stamp-scale, 1))
       rotate(var(--stamp-rotate, 0deg));
     transform-origin: center center;
-    animation: tread-stamp-life 3000ms ease-out forwards;
+    animation: tread-stamp-life 1000ms ease-out forwards;
     will-change: opacity;
   }
 
