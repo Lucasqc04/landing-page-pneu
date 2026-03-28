@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 
 // ─── Constantes ────────────────────────────────────────────────────────────
-const SMOKE_LIFETIME_MS = 2600
-const SMOKE_SPAWN_GAP_MS = 60
 const TREAD_LIFETIME_MS = 1000
-const TREAD_SPAWN_GAP_MS = 40
-const TREAD_TRAIL_SHIFT_RATIO = 0.9
+const TREAD_SPAWN_GAP_MS = 20
+const TREAD_TRAIL_SHIFT_RATIO = 0.5
+const TREAD_WIDTH_RATIO = 0.84
+const TREAD_ENTRY_SHIFT_PX = 14
 const IDLE_TIMEOUT_MS = 130
 const HERO_SCROLL_SECTION_SELECTOR = '[data-hero-scroll-section]'
-const MAX_SMOKES = 48
 const MAX_TREAD_MARKS = 28
 
 const rnd = (min, max) => Math.round(min + Math.random() * (max - min))
@@ -32,13 +31,11 @@ const trimList = (list, max, cancelFn) => {
 function TireScrollEffect() {
   const [isMoving, setIsMoving] = useState(false)
   const [isAfterHero, setIsAfterHero] = useState(false)
-  const [smokes, setSmokes] = useState([])
   const [treadMarks, setTreadMarks] = useState([])
   const [pageHeight, setPageHeight] = useState(() => getPageHeight())
 
   const lastYRef = useRef(0)
   const lastScrollAtRef = useRef(0)
-  const nextSmokeAtRef = useRef(0)
   const nextTreadAtRef = useRef(0)
   const timersRef = useRef(new Map())
   const wheelSlotRef = useRef(null)
@@ -101,35 +98,18 @@ function TireScrollEffect() {
       timers.set(id, tid)
     }
 
-    // ── fumaça ──────────────────────────────────────────────────────────
-    const makeSmoke = (direction, id) => ({
-      id,
-      direction,
-      spawnX: rnd(-7, 9),
-      spawnY: rnd(-18, 18),
-      swayX: rnd(-6, 7),
-      travel: rnd(120, 220),
-      width: rnd(34, 50),
-      height: rnd(110, 180),
-      tilt: rnd(-5, 5),
-    })
-
-    const spawnSmoke = (direction, now) => {
-      const id = `sm-${now}-${Math.random().toString(36).slice(2, 7)}`
-      scheduleRemove(id, setSmokes, SMOKE_LIFETIME_MS)
-      setSmokes((prev) => trimList([...prev, makeSmoke(direction, id)], MAX_SMOKES, cancel))
-    }
-
     // ── marca de rastro no chão ──────────────────────────────────────────
     const makeTreadMark = (id, direction, metrics) => {
       const trailDirection = direction === 'down' ? -1 : 1
+      const treadWidth = metrics.width * TREAD_WIDTH_RATIO
       return {
         id,
-        top: metrics.centerY + trailDirection * metrics.size * TREAD_TRAIL_SHIFT_RATIO + rnd(-10, 10),
-        left: metrics.left,
-        width: metrics.width,
-        scale: 0.9 + Math.random() * 0.2,
-        rotate: rnd(-3, 3),
+        top: metrics.centerY + trailDirection * metrics.size * TREAD_TRAIL_SHIFT_RATIO + rnd(-7, 7),
+        left: metrics.left + (metrics.width - treadWidth) / 2,
+        width: treadWidth,
+        scale: 0.86 + Math.random() * 0.1,
+        rotate: rnd(-2, 2),
+        entryShift: trailDirection * -TREAD_ENTRY_SHIFT_PX + rnd(-2, 2),
       }
     }
 
@@ -159,11 +139,6 @@ function TireScrollEffect() {
 
       setIsMoving(true)
       lastScrollAtRef.current = now
-
-      if (now >= nextSmokeAtRef.current) {
-        spawnSmoke(dy > 0 ? 'down' : 'up', now)
-        nextSmokeAtRef.current = now + SMOKE_SPAWN_GAP_MS
-      }
 
       if (now >= nextTreadAtRef.current) {
         spawnTreadMark(dy > 0 ? 'down' : 'up', now)
@@ -218,6 +193,7 @@ function TireScrollEffect() {
               '--stamp-width': `${mark.width}px`,
               '--stamp-scale': mark.scale,
               '--stamp-rotate': `${mark.rotate}deg`,
+              '--stamp-entry-shift': `${mark.entryShift}px`,
             }}
           >
             <img
@@ -231,35 +207,7 @@ function TireScrollEffect() {
       </div>
 
       <div className="tire-scroll-overlay" aria-hidden="true">
-        {/* 2 ── Fumaça (z-index 1) */}
-        <div className="tire-scroll-smoke-layer">
-          {smokes.map((smoke) => (
-            <span
-              key={smoke.id}
-              className={`tire-scroll-smoke tire-scroll-smoke-${smoke.direction}`}
-              style={{
-                '--smoke-spawn-x': `${smoke.spawnX}px`,
-                '--smoke-spawn-y': `${smoke.spawnY}px`,
-                '--smoke-sway-x': `${smoke.swayX}px`,
-                '--smoke-travel': `${smoke.travel}px`,
-                '--smoke-width': `${smoke.width}px`,
-                '--smoke-height': `${smoke.height}px`,
-                '--smoke-tilt': `${smoke.tilt}deg`,
-                '--smoke-opacity': '0.42',
-                '--smoke-opacity-mid': '0.30',
-              }}
-            >
-              <img
-                src="/patterns/tread-track-a.png"
-                alt=""
-                className="tire-scroll-smoke-image"
-                decoding="async"
-              />
-            </span>
-          ))}
-        </div>
-
-        {/* 3 ── Pneu (z-index 2 — topo) */}
+        {/* 2 ── Pneu (topo) */}
         <div className="tire-scroll-wheel-slot" ref={wheelSlotRef}>
           <img
             src="/images/scroll-tire.png"

@@ -12,10 +12,12 @@ function App() {
     <main className="overflow-x-clip bg-white text-ink">
       <TireScrollEffect />
       <HeroScrollVideo videoSrc={heroVideoPath} />
-      <TransformationSection />
-      <ProcessSection />
-      <BenefitsSection />
-      <FinalCtaSection />
+      <div className="tire-safe-corridor">
+        <TransformationSection />
+        <ProcessSection />
+        <BenefitsSection />
+        <FinalCtaSection />
+      </div>
     </main>
   )
 }
