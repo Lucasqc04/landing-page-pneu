@@ -80,6 +80,7 @@ function HeroScrollVideo({ videoSrc }) {
                 muted
                 playsInline
                 preload="auto"
+                poster="/images/hero-video-poster.jpg"
                 disablePictureInPicture
                 controlsList="nodownload noplaybackrate noremoteplayback"
                 aria-label="Video do processo de fabricacao de pneus remold premium controlado pelo scroll"
