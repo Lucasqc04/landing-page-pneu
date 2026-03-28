@@ -80,7 +80,8 @@ function TireScrollEffect() {
         return true
       }
 
-      const nextIsAfterHero = heroSection.getBoundingClientRect().bottom <= globalThis.window.innerHeight
+      const wheelTopViewport = wheelSlotRef.current?.getBoundingClientRect().top ?? (globalThis.window.innerHeight * 0.5)
+      const nextIsAfterHero = heroSection.getBoundingClientRect().bottom <= wheelTopViewport
       setIsAfterHero((prev) => (prev === nextIsAfterHero ? prev : nextIsAfterHero))
       return nextIsAfterHero
     }
@@ -171,15 +172,11 @@ function TireScrollEffect() {
     }
   }, [])
 
-  if (!isAfterHero) {
-    return null
-  }
-
   return (
     <>
       {/* 1 ── Marcas ancoradas na página */}
       <div
-        className="tire-tread-marks-layer"
+        className={`tire-tread-marks-layer${isAfterHero ? ' is-visible' : ''}`}
         aria-hidden="true"
         style={{ '--tread-page-height': `${pageHeight}px` }}
       >
@@ -208,14 +205,16 @@ function TireScrollEffect() {
 
       <div className="tire-scroll-overlay" aria-hidden="true">
         {/* 2 ── Pneu (topo) */}
-        <div className="tire-scroll-wheel-slot" ref={wheelSlotRef}>
-          <img
-            src="/images/scroll-tire.png"
-            alt=""
-            className={`tire-scroll-wheel${isMoving ? ' is-moving' : ''}`}
-            loading="eager"
-            decoding="async"
-          />
+        <div className={`tire-scroll-wheel-slot${isAfterHero ? ' is-visible' : ''}`} ref={wheelSlotRef}>
+          <div className={`tire-scroll-wheel-shell${isAfterHero ? ' is-visible' : ''}`}>
+            <img
+              src="/images/scroll-tire.png"
+              alt=""
+              className={`tire-scroll-wheel${isMoving ? ' is-moving' : ''}`}
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         </div>
       </div>
     </>
