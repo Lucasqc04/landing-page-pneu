@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 const IOS_SAFE_SEEK_TIME = 0.01
 
-const isIosWebKitSafari = () => {
+const isIosWebKit = () => {
   if (typeof navigator === 'undefined') {
     return false
   }
@@ -12,8 +12,7 @@ const isIosWebKitSafari = () => {
   const isIosDevice =
     /iPad|iPhone|iPod/i.test(userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-  const isAppleWebKit =
-    /AppleWebKit/i.test(userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(userAgent)
+  const isAppleWebKit = /AppleWebKit/i.test(userAgent)
 
   return isIosDevice && isAppleWebKit
 }
@@ -29,7 +28,7 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
       return undefined
     }
 
-    const isIosSafari = isIosWebKitSafari()
+    const isIosBrowser = isIosWebKit()
 
     const syncMetadata = () => {
       const nextDuration = Number.isFinite(video.duration) ? video.duration : 0
@@ -47,12 +46,11 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
     video.muted = true
     video.defaultMuted = true
     video.playsInline = true
+    video.preload = 'metadata'
     video.setAttribute('webkit-playsinline', 'true')
-    video.pause()
-    video.load()
 
     const primeFirstFrameForIos = () => {
-      if (!isIosSafari) {
+      if (!isIosBrowser || video.readyState < 2) {
         return
       }
 
@@ -67,7 +65,6 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
     }
 
     video.addEventListener('loadedmetadata', syncMetadata)
-    video.addEventListener('loadedmetadata', primeFirstFrameForIos)
     video.addEventListener('durationchange', syncMetadata)
     video.addEventListener('loadeddata', syncReadyState)
     video.addEventListener('loadeddata', primeFirstFrameForIos)
@@ -76,13 +73,14 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
 
     if (video.readyState >= 1) {
       syncMetadata()
+    }
+    if (video.readyState >= 2) {
       primeFirstFrameForIos()
     }
     syncReadyState()
 
     return () => {
       video.removeEventListener('loadedmetadata', syncMetadata)
-      video.removeEventListener('loadedmetadata', primeFirstFrameForIos)
       video.removeEventListener('durationchange', syncMetadata)
       video.removeEventListener('loadeddata', syncReadyState)
       video.removeEventListener('loadeddata', primeFirstFrameForIos)
@@ -94,16 +92,16 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
   useEffect(() => {
     const section = sectionRef.current
     const video = videoRef.current
-    if (!section || !video || duration <= 0) {
+    if (!section || !video || duration <= 0 || !isReady) {
       return undefined
     }
 
-    const isIosSafari = isIosWebKitSafari()
+    const isIosBrowser = isIosWebKit()
     const isCoarsePointer =
       window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0
     const seekEpsilon = isCoarsePointer ? 1 / 12 : 1 / 120
     const minSeekIntervalMs = isCoarsePointer ? 85 : 0
-    const minimumTargetTime = isIosSafari ? Math.min(IOS_SAFE_SEEK_TIME, duration) : 0
+    const minimumTargetTime = isIosBrowser ? Math.min(IOS_SAFE_SEEK_TIME, duration) : 0
 
     let rafId = null
     let isTickQueued = false
@@ -133,7 +131,7 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
       if (Math.abs(targetTime - lastTargetTime) > seekEpsilon) {
         lastTargetTime = targetTime
         lastSeekAt = now
-        const canUseFastSeek = !isIosSafari && typeof video.fastSeek === 'function'
+        const canUseFastSeek = !isIosBrowser && typeof video.fastSeek === 'function'
         try {
           if (canUseFastSeek) {
             video.fastSeek(targetTime)
@@ -170,7 +168,7 @@ function useScrollScrubVideo({ sectionRef, videoRef }) {
         cancelAnimationFrame(rafId)
       }
     }
-  }, [duration, sectionRef, videoRef])
+  }, [duration, isReady, sectionRef, videoRef])
 
   return {
     duration,

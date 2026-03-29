@@ -23,13 +23,13 @@ function FinalCtaSection() {
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
                   href="#"
-                  className="rounded-full bg-white px-7 py-3 text-sm font-semibold uppercase tracking-[0.13em] text-[#0d1623] transition hover:bg-[#dfe8f2]"
+                  className="rounded-full bg-white px-7 py-3 text-sm font-semibold uppercase tracking-[0.13em] text-[#0d1623] transition hover:bg-[#dfe8f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d1623] focus-visible:ring-offset-2 focus-visible:ring-offset-[#dfe8f2]"
                 >
-                  Pedir cotacao
+                  Pedir cotação
                 </a>
                 <a
                   href="#"
-                  className="rounded-full border border-white/45 px-7 py-3 text-sm font-semibold uppercase tracking-[0.13em] text-white transition hover:border-white hover:bg-white/10"
+                  className="rounded-full border border-white/45 px-7 py-3 text-sm font-semibold uppercase tracking-[0.13em] text-white transition hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1622]"
                 >
                   Falar com comercial
                 </a>

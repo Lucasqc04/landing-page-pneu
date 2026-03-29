@@ -11,9 +11,9 @@ function BenefitsSection() {
       <Container>
         <Reveal>
           <SectionHeading
-            label="Beneficios"
+            label="Benefícios"
             title="Pneus remold premium para compra profissional."
-            description="A NSF fabrica e vende remold com acabamento superior, padrao tecnico consistente e visual de alto nivel."
+            description="A NSF fabrica e vende remold com acabamento superior, padrão técnico consistente e visual de alto nível."
           />
         </Reveal>
 

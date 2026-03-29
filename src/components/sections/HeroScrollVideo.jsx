@@ -5,7 +5,7 @@ import useScrollScrubVideo from '../../hooks/useScrollScrubVideo'
 function HeroScrollVideo({ videoSrc }) {
   const sectionRef = useRef(null)
   const videoRef = useRef(null)
-  useScrollScrubVideo({
+  const { isReady } = useScrollScrubVideo({
     sectionRef,
     videoRef,
   })
@@ -14,9 +14,9 @@ function HeroScrollVideo({ videoSrc }) {
     <section
       ref={sectionRef}
       data-hero-scroll-section
-      className="relative h-[160svh] w-full bg-white md:h-[310svh]"
+      className="relative h-[130vh] w-full bg-white supports-[height:100svh]:h-[130svh] md:h-[190vh] md:supports-[height:100svh]:h-[190svh]"
     >
-      <div className="sticky top-0 h-[92svh] overflow-hidden md:h-[90svh]">
+      <div className="sticky top-0 h-[92vh] overflow-hidden supports-[height:100svh]:h-[92svh] md:h-[90vh] md:supports-[height:100svh]:h-[90svh]">
         {/* Backgrounds */}
         <div className="absolute inset-0 bg-white" />
 
@@ -69,22 +69,35 @@ function HeroScrollVideo({ videoSrc }) {
                 Desktop : ocupa o bloco da direita, alinhado embaixo e centralizado
           */}
           <div className="
-            relative mx-6 mb-6 h-[32svh] flex-shrink-0
+            relative mx-6 mb-6 h-[32vh] flex-shrink-0
+            supports-[height:100svh]:h-[32svh]
             md:mx-0 md:mb-0 md:h-full md:w-[42%] md:pb-12
             lg:w-[40%]
             md:flex md:items-end md:justify-center
           ">
-            <div className="h-full w-full overflow-hidden rounded-[1.5rem] md:h-[72svh] md:w-[88%] md:rounded-[1.35rem]">
+            <div className="relative h-full w-full overflow-hidden rounded-[1.5rem] md:h-[72vh] md:w-[88%] md:rounded-[1.35rem] md:supports-[height:100svh]:h-[72svh]">
+              <img
+                src="/images/hero-video-poster.jpg"
+                alt=""
+                aria-hidden="true"
+                className={`pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+                  isReady ? 'opacity-0' : 'opacity-100'
+                }`}
+                loading="eager"
+                decoding="async"
+              />
               <video
                 ref={videoRef}
-                className="h-full w-full object-cover"
+                className={`h-full w-full object-cover transition-opacity duration-300 ${
+                  isReady ? 'opacity-100' : 'opacity-0'
+                }`}
                 muted
                 playsInline
-                preload="auto"
+                preload="metadata"
                 poster="/images/hero-video-poster.jpg"
                 disablePictureInPicture
                 controlsList="nodownload noplaybackrate noremoteplayback"
-                aria-label="Video do processo de fabricacao de pneus remold premium controlado pelo scroll"
+                aria-label="Vídeo do processo de fabricação de pneus remold premium controlado pelo scroll"
               >
                 <source
                   src="/videos/hero-tire-restoration.mobile.mp4"

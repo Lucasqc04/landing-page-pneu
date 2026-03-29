@@ -1,70 +1,70 @@
 export const heroContent = {
   eyebrow: 'NSF Pneus Remold',
-  title: 'Fabrica de pneus remold premium com padrao de novos.',
+  title: 'Fábrica de pneus remold premium para operação profissional.',
   subtitle:
-    'Role para acompanhar o processo industrial da NSF. Cada frame mostra o controle tecnico por tras de um remold premium.',
+    'Role para acompanhar o processo industrial da NSF. Cada frame mostra como garantimos padrão visual de pneu novo.',
   supporting:
-    'A NSF fabrica e comercializa pneus remold com acabamento superior, padrao visual sofisticado e qualidade consistente.',
+    'Mais economia por quilômetro, prazo previsível, garantia comercial e capacidade para atender frotas e revendas.',
 }
 
 export const transformationPoints = [
   {
     label: 'Mercado comum',
-    title: 'Remold sem padrao visual consistente',
-    copy: 'Acabamento irregular, leitura visual fraca e variacao entre lotes reduzem a percepcao de qualidade.',
+    title: 'Remold sem padrão consistente',
+    copy: 'Acabamento irregular e variação entre lotes aumentam risco de retrabalho e atrasam a reposição.',
   },
   {
-    label: 'Padrao NSF',
-    title: 'Remold premium com presenca de novo',
-    copy: 'Resultado uniforme, elegante e profundo, desenvolvido em fabrica para entregar nivel premium em cada pneu.',
+    label: 'Padrão NSF',
+    title: 'Remold premium com padrão de fábrica',
+    copy: 'Resultado uniforme, com qualidade previsível e produção escalável para pedidos recorrentes.',
   },
 ]
 
 export const processSteps = [
   {
     step: '01',
-    title: 'Selecao tecnica de carcacas',
+    title: 'Seleção técnica de carcaças',
     description:
-      'Triagem estrutural e inspecao criteriosa para aprovar apenas carcacas com base adequada ao padrao NSF.',
-    highlight: 'Base aprovada',
+      'Triagem estrutural rigorosa para aprovar apenas carcaças aptas ao padrão NSF e reduzir falhas no ciclo.',
+    highlight: 'Triagem técnica',
   },
   {
     step: '02',
     title: 'Processo industrial controlado',
     description:
-      'Preparacao, aplicacao e controle de processo com repetibilidade para garantir desempenho e acabamento premium.',
-    highlight: 'Controle de fabrica',
+      'Etapas padronizadas com controle de processo para manter repetibilidade, prazo e qualidade em lote.',
+    highlight: 'Prazo previsível',
   },
   {
     step: '03',
-    title: 'Acabamento premium e liberacao final',
+    title: 'Acabamento premium e liberação final',
     description:
-      'Inspecao final por criterios tecnicos e de qualidade para liberar pneus remold prontos para operacoes exigentes.',
-    highlight: 'Qualidade consistente',
+      'Inspeção final com critérios técnicos e estéticos, seguida de garantia comercial para entrega com confiança.',
+    highlight: 'Garantia comercial',
   },
 ]
 
 export const benefits = [
   {
-    title: 'Remold premium com assinatura visual forte',
-    copy: 'Aparencia refinada, leitura de novo e acabamento que valoriza a apresentacao da sua operacao.',
+    title: 'Economia inteligente por operação',
+    copy: 'Custo competitivo com padrão premium para reduzir gasto total de reposição sem perder apresentação.',
   },
   {
-    title: 'Padrao tecnico de fabrica',
-    copy: 'Processo industrial com controle de qualidade para manter consistencia entre lotes e entregas.',
+    title: 'Prazos de entrega previsíveis',
+    copy: 'Fluxo industrial padronizado para manter regularidade de fornecimento e reduzir urgências na compra.',
   },
   {
-    title: 'Custo inteligente com nivel premium',
-    copy: 'A proposta remold da NSF combina eficiencia economica com presenca visual de alto padrao.',
+    title: 'Garantia comercial e suporte técnico',
+    copy: 'Compra com segurança e acompanhamento para decisões de reposição com menor risco operacional.',
   },
   {
-    title: 'Confianca para compra profissional',
-    copy: 'Ideal para empresas que precisam comprar remold com previsibilidade, qualidade e posicionamento premium.',
+    title: 'Capacidade para frotas e revendas',
+    copy: 'Estrutura para atender volumes recorrentes com padrão visual e técnico consistente.',
   },
 ]
 
 export const ctaContent = {
-  title: 'Compre pneus remold premium direto da fabrica NSF.',
+  title: 'Compre pneus remold premium direto da fábrica NSF.',
   subtitle:
-    'Fale com nosso time comercial e receba uma proposta para sua operacao com o padrao premium da NSF.',
+    'Solicite cotação com volume, prazo e condições comerciais para sua operação.',
 }

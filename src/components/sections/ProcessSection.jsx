@@ -12,8 +12,8 @@ function ProcessSection() {
         <Reveal>
           <SectionHeading
             label="Processo"
-            title="Processo industrial com controle tecnico ponta a ponta."
-            description="Da selecao da carcaca ao acabamento final, cada etapa segue padrao de fabrica para entregar remold premium consistente."
+            title="Processo industrial com controle técnico ponta a ponta."
+            description="Da seleção da carcaça ao acabamento final, cada etapa segue padrão de fábrica para entregar remold premium consistente."
           />
         </Reveal>
 

@@ -34,9 +34,9 @@ function TransformationSection() {
       <Container>
         <Reveal>
           <SectionHeading
-            label="Padrao NSF"
+            label="Padrão NSF"
             title="Remold premium com leitura visual de pneu novo."
-            description="Nao e reforma pontual de pneu do cliente: e produto de fabrica, com processo controlado e acabamento superior."
+            description="Não é reforma pontual de pneu do cliente: é produto de fábrica, com processo controlado e acabamento superior."
           />
         </Reveal>
 
