@@ -7,6 +7,8 @@ import * as THREE from 'three'
 
 const MODEL_TARGET_SIZE = 2.52
 const MODEL_VERTICAL_OFFSET = -1.72
+const OFF_EXPOSURE_EV = -1.22
+const OFF_TONE_MAPPING_EXPOSURE = Math.pow(2, OFF_EXPOSURE_EV)
 
 const TEXTURE_CANDIDATES = {
   map: [
@@ -274,12 +276,14 @@ function useTireTextureSet() {
   return pbrSet ?? proceduralSet
 }
 
-function TireModel({ modelPath, shouldAutoRotate }) {
+function TireModel({ modelPath, shouldAutoRotate, useOverlayTextures }) {
   const groupRef = useRef(null)
   const { scene } = useGLTF(modelPath)
   const textureSet = useTireTextureSet()
 
   const tireMaterial = useMemo(() => {
+    if (!useOverlayTextures) return null
+
     const material = new THREE.MeshStandardMaterial({
       color: new THREE.Color('#0f0f0f'),
       roughness: 0.96,
@@ -297,17 +301,18 @@ function TireModel({ modelPath, shouldAutoRotate }) {
     material.normalScale.set(normalIntensity, normalIntensity)
 
     return material
-  }, [textureSet])
+  }, [textureSet, useOverlayTextures])
 
   useEffect(
     () => () => {
-      tireMaterial.dispose()
+      tireMaterial?.dispose()
     },
     [tireMaterial],
   )
 
   const normalizedScene = useMemo(() => {
     const cloned = scene.clone(true)
+    const clonedMaterials = []
 
     cloned.traverse((node) => {
       if (!node.isMesh) return
@@ -323,7 +328,27 @@ function TireModel({ modelPath, shouldAutoRotate }) {
         }
       }
 
-      node.material = tireMaterial
+      if (useOverlayTextures && tireMaterial) {
+        node.material = tireMaterial
+        return
+      }
+
+      if (Array.isArray(node.material)) {
+        node.material = node.material.map((material) => {
+          const clonedMaterial = material?.clone?.() ?? material
+          if (clonedMaterial?.dispose) {
+            clonedMaterials.push(clonedMaterial)
+          }
+          return clonedMaterial
+        })
+        return
+      }
+
+      const clonedMaterial = node.material?.clone?.() ?? node.material
+      if (clonedMaterial?.dispose) {
+        clonedMaterials.push(clonedMaterial)
+      }
+      node.material = clonedMaterial
     })
 
     const box = new THREE.Box3().setFromObject(cloned)
@@ -340,15 +365,21 @@ function TireModel({ modelPath, shouldAutoRotate }) {
     cloned.scale.setScalar(scale)
     cloned.position.y += (size.y * scale) / 2
 
-    return cloned
-  }, [scene, tireMaterial])
+    return {
+      object: cloned,
+      clonedMaterials,
+    }
+  }, [scene, tireMaterial, useOverlayTextures])
 
   useEffect(
     () => () => {
-      normalizedScene.traverse((node) => {
+      normalizedScene.object.traverse((node) => {
         if (node.isMesh && node.geometry) {
           node.geometry.dispose()
         }
+      })
+      normalizedScene.clonedMaterials.forEach((material) => {
+        material.dispose()
       })
     },
     [normalizedScene],
@@ -361,34 +392,72 @@ function TireModel({ modelPath, shouldAutoRotate }) {
 
   return (
     <group ref={groupRef} position={[0, MODEL_VERTICAL_OFFSET, 0]}>
-      <primitive object={normalizedScene} />
+      <primitive object={normalizedScene.object} />
     </group>
   )
 }
 
-function Scene({ modelPath, isActive }) {
+function Scene({ modelPath, isActive, useOverlayTextures }) {
   const [isInteracting, setIsInteracting] = useState(false)
+  const lightPreset = useMemo(
+    () =>
+      useOverlayTextures
+        ? {
+            ambient: 0.82,
+            ambientColor: '#ffffff',
+            key: 1.18,
+            keyColor: '#ffffff',
+            fillA: 0.48,
+            fillB: 0.35,
+            fillColorA: '#ffffff',
+            fillColorB: '#ffffff',
+            envBlur: 0.42,
+            envPreset: 'studio',
+          }
+        : {
+            ambient: 0.61,
+            ambientColor: '#a0a0a0',
+            key: 4,
+            keyColor: '#d3d3d3',
+            fillA: 0,
+            fillB: 0,
+            fillColorA: '#d3d3d3',
+            fillColorB: '#d3d3d3',
+            envBlur: 0.32,
+            envPreset: 'warehouse',
+          },
+    [useOverlayTextures],
+  )
 
   return (
     <>
       <color attach="background" args={['#eef2f6']} />
       <fog attach="fog" args={['#e9eef4', 7.2, 16]} />
 
-      <ambientLight intensity={0.82} />
+      <ambientLight intensity={lightPreset.ambient} color={lightPreset.ambientColor} />
 
       <directionalLight
         castShadow
-        intensity={1.18}
+        intensity={lightPreset.key}
+        color={lightPreset.keyColor}
         position={[4.6, 5.7, 3.6]}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
 
-      <directionalLight intensity={0.48} position={[-4.2, 2.8, -3]} />
-      <directionalLight intensity={0.35} position={[0.8, 1.8, 5.2]} />
+      {lightPreset.fillA > 0 ? (
+        <directionalLight intensity={lightPreset.fillA} color={lightPreset.fillColorA} position={[-4.2, 2.8, -3]} />
+      ) : null}
+      {lightPreset.fillB > 0 ? (
+        <directionalLight intensity={lightPreset.fillB} color={lightPreset.fillColorB} position={[0.8, 1.8, 5.2]} />
+      ) : null}
 
       <Suspense fallback={<ModelLoader />}>
-        <TireModel modelPath={modelPath} shouldAutoRotate={isActive && !isInteracting} />
+        <TireModel
+          modelPath={modelPath}
+          shouldAutoRotate={isActive && !isInteracting}
+          useOverlayTextures={useOverlayTextures}
+        />
 
         <ContactShadows
           frames={1}
@@ -400,7 +469,7 @@ function Scene({ modelPath, isActive }) {
           resolution={512}
         />
 
-        <Environment preset="studio" blur={0.42} />
+        <Environment preset={lightPreset.envPreset} blur={lightPreset.envBlur} />
       </Suspense>
 
       <OrbitControls
@@ -422,24 +491,33 @@ function Scene({ modelPath, isActive }) {
   )
 }
 
-function TireViewer({ modelPath = '/models/tire.glb', isActive = true, className = '' }) {
+function TireViewer({ modelPath = '/models/tire4.glb', isActive = true, useOverlayTextures = true, className = '' }) {
+  const toneMappingExposure = useOverlayTextures ? 1 : OFF_TONE_MAPPING_EXPOSURE
+
   return (
     <div
       className={`relative h-full w-full overflow-hidden rounded-[1.65rem] border border-[#d8e0e9] bg-[linear-gradient(165deg,#ffffff_0%,#eff3f8_56%,#e2e9f1_100%)] shadow-cinema ${className}`}
       onWheelCapture={(event) => event.preventDefault()}
     >
       <Canvas
+        key={useOverlayTextures ? 'viewer-on' : 'viewer-off'}
         shadows
         dpr={[1, 1.9]}
         camera={{ position: [0.18, 0.8, 4.4], fov: 34 }}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance',
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure,
+        }}
       >
-        <Scene modelPath={modelPath} isActive={isActive} />
+        <Scene modelPath={modelPath} isActive={isActive} useOverlayTextures={useOverlayTextures} />
       </Canvas>
     </div>
   )
 }
 
-useGLTF.preload('/models/tire.glb')
+useGLTF.preload('/models/tire4.glb')
 
 export default TireViewer

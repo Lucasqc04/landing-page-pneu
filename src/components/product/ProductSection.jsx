@@ -17,6 +17,7 @@ function ViewerFallback() {
 function ProductSection() {
   const sectionRef = useRef(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [useOverlayTextures, setUseOverlayTextures] = useState(false)
 
   useEffect(() => {
     const node = sectionRef.current
@@ -81,14 +82,27 @@ function ProductSection() {
         </div>
 
         <div
-          className={`order-1 h-[54vh] min-h-[340px] w-full transition-all duration-900 ease-out md:order-2 md:h-[74vh] ${
+          className={`relative order-1 h-[54vh] min-h-[340px] w-full transition-all duration-900 ease-out md:order-2 md:h-[74vh] ${
             isVisible
               ? 'translate-y-0 scale-100 opacity-100'
               : 'translate-y-6 scale-95 opacity-0'
           }`}
         >
+          <button
+            type="button"
+            onClick={() => setUseOverlayTextures((prev) => !prev)}
+            aria-pressed={useOverlayTextures}
+            className="absolute right-4 top-4 z-20 rounded-full border border-ink/15 bg-white/90 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-ink shadow-sm backdrop-blur transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f5f8fc]"
+          >
+            Textura extra: {useOverlayTextures ? 'ON' : 'OFF'}
+          </button>
+
           <Suspense fallback={<ViewerFallback />}>
-            <TireViewer modelPath="/models/tire.glb" isActive={isVisible} />
+            <TireViewer
+              modelPath="/models/tire4.glb"
+              isActive={isVisible}
+              useOverlayTextures={useOverlayTextures}
+            />
           </Suspense>
         </div>
       </div>

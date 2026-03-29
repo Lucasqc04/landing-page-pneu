@@ -13,9 +13,10 @@ function App() {
     <main className="overflow-x-clip bg-white text-ink">
       <TireScrollEffect />
       <HeroScrollVideo videoSrc={heroVideoPath} />
-      <ProductSection />
+  
       <div className="tire-safe-corridor">
         <TransformationSection />
+            <ProductSection />
         <ProcessSection />
         <BenefitsSection />
         <FinalCtaSection />
